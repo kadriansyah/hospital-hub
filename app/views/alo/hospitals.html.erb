@@ -36,6 +36,19 @@
                         color: #ffffff;
                     }
                 </style>
+                <iron-ajax
+                    id="dataAjax"
+                    url="[[dataUrl]]"
+                    handle-as="json"
+                    on-response="_onResponse"
+                    on-error="_onError"
+                    headers='{
+                        "Content-Type":"application/json",
+                        "uid":"58d1f8df6417bf531154b368",
+                        "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb3JlX3VzZXIiOiI1OGQxZjhkZjY0MTdiZjUzMTE1NGIzNjgifQ.JD517a-vlint083NbjVxTN-EovtABLTaSkVvGu-LhiE"
+                        }'
+                >
+                </iron-ajax>
                 <label>Tambah Rumah Sakit</label>
                 <input list="hospitals" name="hospitals" placeholder="pilih nama rumah sakit" on-input="_onInput">
                 <datalist id="hospitals">
@@ -49,14 +62,32 @@
         </dom-bind>
         <script>
             var alocombo = document.querySelector('#alocombo');
+
+            alocombo.dataUrl = "http://api-dev.alodokter.com/api/v190/hospitals/get_hospital_suggestion.json";
+            alocombo.data = [];
+
+            alocombo._onResponse = function(data) {
+                console.log(data.detail.response);
+                var response = data.detail.response;
+                this.count = response.count;
+                this.splice('data', 0, this.data.length); // clear data
+                response.data.hospitals.forEach(function(item) {
+                    this.push('data', item);
+                }, this);
+            };
+
+            alocombo._onError = function(data) {
+                var source = event.target || event.srcElement;
+                console.log('HERE _onError HERE _onError HERE _onError');
+            };
+
             alocombo._onInput = function(event) {
                 var source = event.target || event.srcElement;
-                console.log('HERE '+ source.value +' HERE _onInput');
-                this.data = [
-                    { name: 'Siloam', id: '12345'},
-                    { name: 'Pertamina', id: '12346'},
-                    { name: 'Medika', id: '12347'}
-                ];
+                if (source.value.length >= 5) {
+                    console.log('HERE '+ source.value +' HERE _onInput');
+                    this.$.dataAjax.url = this.dataUrl;
+                    this.$.dataAjax.generateRequest(); 
+                } 
             };
 
             alocombo._onClick = function(event) {
