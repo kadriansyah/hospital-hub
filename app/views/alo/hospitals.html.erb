@@ -1,0 +1,81 @@
+<%= javascript_pack_tag 'components/alo/hospitals', defer: true %>
+<style>
+    hospital-list {
+        margin: 0;
+    }
+    .component_container {
+        padding: 0;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 component_container">
+        <dom-bind id="alocombo">
+            <template>
+                <style>
+                    label {
+                        margin-right: 10px;
+                    }
+                    input {
+                        margin: 5px 5px 5px 0px;
+                        padding: 5px 10px;
+                        width: 300px;
+                        line-height: 25px;
+                    }
+                    button {
+                        padding: 5px 10px;
+                        line-height: 25px;
+                        width: 100px;
+                        border-radius: 4px;
+                        background-color: #3570d2;
+                        font-size: 14px;
+                        font-weight: normal;
+                        font-style: normal;
+                        font-stretch: normal;
+                        letter-spacing: normal;
+                        text-align: center;
+                        color: #ffffff;
+                    }
+                </style>
+                <label>Tambah Rumah Sakit</label>
+                <input list="hospitals" name="hospitals" placeholder="pilih nama rumah sakit" on-input="_onInput">
+                <datalist id="hospitals">
+                    <template is="dom-repeat" items="{{data}}">
+                        <option value="{{item.name}}" id="{{item.id}}">
+                    </template>
+                </datalist>
+                <input placeholder="masukan email penanggung jawab">
+                <button on-click="_onClick">kirim</button>
+            </template>
+        </dom-bind>
+        <script>
+            var alocombo = document.querySelector('#alocombo');
+            alocombo._onInput = function(event) {
+                var source = event.target || event.srcElement;
+                console.log('HERE '+ source.value +' HERE _onInput');
+                this.data = [
+                    { name: 'Siloam', id: '12345'},
+                    { name: 'Pertamina', id: '12346'},
+                    { name: 'Medika', id: '12347'}
+                ];
+            };
+
+            alocombo._onClick = function(event) {
+                var source = event.target || event.srcElement;
+                console.log('HERE _onClick HERE _onClick HERE _onClick');
+            };
+
+            function ready() {
+                // default value
+                alocombo.data = [
+                    { name: 'Siloam', id: '12345'},
+                    { name: 'Pertamina', id: '12346'},
+                    { name: 'Medika', id: '12347'}
+                ];
+            }
+            document.addEventListener("DOMContentLoaded", ready);
+        </script>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12 component_container">
+        <hospital-list data-url="/admin/hospitals" form-authenticity-token="<%= form_authenticity_token.to_s %>"></hospital-list>
+    </div>
+</div>

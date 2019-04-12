@@ -26,7 +26,7 @@ Rails.application.routes.draw do
             get 'delete', on: :member
         end
 
-        resources :articles, controller: 'core/articles', except: :destroy do
+        resources :hospitals, controller: 'alo/hospitals', except: :destroy do
             get 'delete', on: :member
         end
     end
