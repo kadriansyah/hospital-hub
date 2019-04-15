@@ -71,5 +71,11 @@ class HospitalList extends BaseList {
     _formTitleCopy() {
         return 'Copy Hospital';
     }
+
+    reload() {
+        this.$.dataAjax.url = this.dataUrl + '?page=' + this.page.toString();
+        this.$.dataAjax.generateRequest();
+        this.$.progress.hidden = false;
+    }
 }
 customElements.define('hospital-list', HospitalList);

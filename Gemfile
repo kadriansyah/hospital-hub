@@ -24,6 +24,7 @@ gem 'capistrano'
 gem 'rails-controller-testing'
 gem 'tzinfo-data'
 gem 'execjs'
+gem 'httparty'
 
 group :development do
     gem 'byebug', platform: :mri

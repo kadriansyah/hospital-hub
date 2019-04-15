@@ -1,0 +1,6 @@
+# ALOMEDIKA
+BASE_URI_RS_API: 'http://api-dev.alodokter.com'
+BASE_DUMMY_URI_RS_API: 'http://localhost:3000'
+UID_RS_API: '58d1f8df6417bf531154b368'
+AUTH_RS_API: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb3JlX3VzZXIiOiI1OGQxZjhkZjY0MTdiZjUzMTE1NGIzNjgifQ.JD517a-vlint083NbjVxTN-EovtABLTaSkVvGu-LhiE'
+CONTENT_TYPE_RS_API: 'application/json'

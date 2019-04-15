@@ -7,9 +7,9 @@ class Alo::Hospital
 
     # kaminari page setting
     paginates_per 20
-	
+
+    field :ref_id, type: String, default: ''
     field :name, type: String, default: ''
-	
-    field :description, type: String, default: ''
+    field :address, type: String, default: ''
 	
 end

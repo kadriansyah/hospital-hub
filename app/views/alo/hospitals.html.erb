@@ -46,24 +46,36 @@
                         "Content-Type":"application/json",
                         "uid":"58d1f8df6417bf531154b368",
                         "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb3JlX3VzZXIiOiI1OGQxZjhkZjY0MTdiZjUzMTE1NGIzNjgifQ.JD517a-vlint083NbjVxTN-EovtABLTaSkVvGu-LhiE"
-                        }'
-                >
+                    }'>
+                </iron-ajax>
+                <iron-ajax
+                    id="saveAjax"
+                    method="post"
+                    url="[[actionUrl]]"
+                    content-type="application/json"
+                    handle-as="json"
+                    on-response="_onSaveResponse"
+                    on-error="_onSaveError">
                 </iron-ajax>
                 <label>Tambah Rumah Sakit</label>
-                <input list="hospitals" name="hospitals" placeholder="pilih nama rumah sakit" on-input="_onInput">
+                <input list="hospitals" name="hospitals" placeholder="pilih nama rumah sakit" on-keyup="_onKeyup" id="hospital">
                 <datalist id="hospitals">
                     <template is="dom-repeat" items="{{data}}">
                         <option value="{{item.name}}" id="{{item.id}}">
                     </template>
                 </datalist>
-                <input placeholder="masukan email penanggung jawab">
+                <input placeholder="masukan email penanggung jawab" id="email">
                 <button on-click="_onClick">kirim</button>
             </template>
         </dom-bind>
         <script>
             var alocombo = document.querySelector('#alocombo');
 
+            // declarative properties
             alocombo.dataUrl = "http://api-dev.alodokter.com/api/v190/hospitals/get_hospital_suggestion.json";
+            alocombo.formAuthenticityToken = "<%= form_authenticity_token.to_s %>"
+            alocombo.actionUrl = '/admin/hospitals';
+            alocombo.hospital = {};
             alocombo.data = [];
 
             alocombo._onResponse = function(data) {
@@ -78,30 +90,58 @@
 
             alocombo._onError = function(data) {
                 var source = event.target || event.srcElement;
-                console.log('HERE _onError HERE _onError HERE _onError');
             };
 
-            alocombo._onInput = function(event) {
+            alocombo._onKeyup = function(event) {
+                if (this.data.length > 0) return;
                 var source = event.target || event.srcElement;
                 if (source.value.length >= 5) {
-                    console.log('HERE '+ source.value +' HERE _onInput');
                     this.$.dataAjax.url = this.dataUrl;
                     this.$.dataAjax.generateRequest(); 
-                } 
+                }
+            };
+
+            alocombo._onSaveResponse = function(e) {
+                var response = e.detail.response;
+                if (response.status == '200') {
+                    this.hospital = {};
+                    console.log('REGISTRATION SUCCESS');
+                    alocombo.hospital_list_component_ref.reload();
+                }
+                else {
+                    console.log('REGISTRATION ERROR');
+                }
+            };
+
+            alocombo._onSaveError = function(event) {
+                console.log('REGISTRATION ERROR');
             };
 
             alocombo._onClick = function(event) {
                 var source = event.target || event.srcElement;
-                console.log('HERE _onClick HERE _onClick HERE _onClick');
+                for (var i=0; i < this.$.hospitals.options.length; i++) {
+                    if (this.$.hospitals.options[i].value == this.$.hospital.value) {
+                        this.hospital.ref_id = this.$.hospitals.options[i].getAttribute("id");
+                        break;
+                    }
+                }
+                this.hospital.email = this.$.email.value;
+                this.$.saveAjax.headers['X-CSRF-Token'] = this.formAuthenticityToken;
+                this.$.saveAjax.body = this.hospital;
+                this.$.saveAjax.generateRequest();
             };
 
             function ready() {
+                // need reference after all DOM content loaded
+                alocombo.hospital_list_component_ref = document.querySelector('hospital-list');
                 // default value
+                /*
                 alocombo.data = [
                     { name: 'Siloam', id: '12345'},
                     { name: 'Pertamina', id: '12346'},
                     { name: 'Medika', id: '12347'}
                 ];
+                */
             }
             document.addEventListener("DOMContentLoaded", ready);
         </script>
